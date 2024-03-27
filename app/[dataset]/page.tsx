@@ -21,9 +21,9 @@ function DatasetInfo({ params }: DataSetParamProps) {
         <>
         <Navbar />
         <div className="container pt-20 py-8 mt-12">
-            <h1 className="text-5xl font-bold">{data.title}</h1>
-            <div className="grid grid-cols-2 items-center gap-2 my-16">
-                <Carousel className="w-full max-w-xl">
+            <h1 className="text-center md:text-start text-5xl font-bold">{data.title}</h1>
+            <div className="grid md:grid-cols-2 justify-items-center items-center gap-8 md:gap-2 my-16">
+                <Carousel className="w-4/5 md:max-w-xl">
                     <CarouselContent>
                         <CarouselItem>
                             <Image
@@ -69,10 +69,10 @@ function DatasetInfo({ params }: DataSetParamProps) {
                     <CarouselPrevious />
                     <CarouselNext />
                 </Carousel>
-                <p className="">{data.desc}</p>
+                <p className="text-justify md:text-start">{data.desc}</p>
             </div>
-            <div>
-                <Button>DOWNLOAD DATASET (16mb)</Button>
+            <div className="text-end">
+                <Button className="w-full md:w-max">DOWNLOAD DATASET (16mb)</Button>
             </div>
         </div>
         </>

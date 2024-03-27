@@ -102,3 +102,18 @@ export async function uploadData(values: zod.infer<typeof datasetSchema>) {
         return {error: "Something went wrong."}
     }
 }
+
+export async function getDatasets() {
+    try {
+        const db = await connectDB();
+        const datasetCollection = db.collection('datasets');
+        const data = await datasetCollection.find({});
+        return {
+            success: true,
+            data: data
+        }
+    } catch(err) {
+        console.error(err);
+        return {success: false, data: []}
+    }
+}
