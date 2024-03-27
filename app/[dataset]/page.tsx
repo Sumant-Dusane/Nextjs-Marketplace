@@ -20,7 +20,7 @@ function DatasetInfo({ params }: DataSetParamProps) {
     return (
         <>
         <Navbar />
-        <div className="container py-8">
+        <div className="container pt-20 py-8 mt-12">
             <h1 className="text-5xl font-bold">{data.title}</h1>
             <div className="grid grid-cols-2 items-center gap-2 my-16">
                 <Carousel className="w-full max-w-xl">

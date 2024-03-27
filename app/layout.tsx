@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/lib/theme-provider";
 import ThemeToggler from "@/components/theme-toggler";
 import Navbar from "./_navbar/page";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -28,8 +29,8 @@ export default function RootLayout({
           <div className="fixed bottom-0 right-0 w-max m-5">
             <ThemeToggler />
           </div>
-          <Navbar />
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
