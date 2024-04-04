@@ -4,6 +4,8 @@ import { connectDB } from "@/lib/db";
 import { datasetSchema, loginSchema, signupSchema } from "@/model";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import JSZip from "jszip";
+import { ObjectId } from "mongodb";
 import { cookies } from "next/headers";
 import * as zod from "zod";
 
@@ -14,10 +16,10 @@ export async function login(values: zod.infer<typeof loginSchema>) {
 
     const { email, password } = validatedFields.data;
 
-    const db = await connectDB();
+    const { db } = await connectDB();
     const userCollection = db.collection('users');
     const user: any = await userCollection.findOne({ email });
-    
+
     if (!user) return { error: "User does not exist" }
 
     const validatePassword = await bcryptjs.compare(password, user.password);
@@ -37,15 +39,15 @@ export async function login(values: zod.infer<typeof loginSchema>) {
 
 export async function signup(values: zod.infer<typeof signupSchema>) {
     const validatedFields = signupSchema.safeParse(values);
-    if(!validatedFields.success) return {error: "Invalid Fields"}
+    if (!validatedFields.success) return { error: "Invalid Fields" }
 
-    const {name, email, password} = validatedFields.data;
+    const { name, email, password } = validatedFields.data;
 
-    const db = await connectDB();
+    const { db } = await connectDB();
     const userCollection = db.collection('users');
-    const user: any = await userCollection.findOne({email});
-    if(user) return {error: "User Already Exists"}
-    
+    const user: any = await userCollection.findOne({ email });
+    if (user) return { error: "User Already Exists" }
+
     const salt = await bcryptjs.genSalt();
     const hashPassword = await bcryptjs.hash(password, salt);
 
@@ -56,25 +58,25 @@ export async function signup(values: zod.infer<typeof signupSchema>) {
     }
     const newUserId = (await userCollection.insertOne(newUser)).insertedId;
 
-    if(!newUserId) return {error: "Something went wrong"}
+    if (!newUserId) return { error: "Something went wrong" }
 
-    return {success: "User Registered Successfully"}
+    return { success: "User Registered Successfully" }
 }
 
 export async function logout() {
     try {
         cookies().delete('token');
-    } catch(err) {
+    } catch (err) {
         console.error(err);
-        return {success: false}
+        return { success: false }
     }
-    return {success: true}
+    return { success: true }
 }
 
 export async function uploadData(values: zod.infer<typeof datasetSchema>) {
     try {
         const validatedFields = datasetSchema.safeParse(values);
-        if(!validatedFields.success) return {error: "Invalid Fields!"}
+        if (!validatedFields.success) return { error: "Invalid Fields!" }
 
         const {
             title,
@@ -83,7 +85,7 @@ export async function uploadData(values: zod.infer<typeof datasetSchema>) {
             dataset
         } = validatedFields.data;
 
-        const db = await connectDB();
+        const { db } = await connectDB();
         const datasetCollection = db.collection("datasets");
 
         const newDataset = {
@@ -94,26 +96,35 @@ export async function uploadData(values: zod.infer<typeof datasetSchema>) {
         };
         const newDatasetId = (await datasetCollection.insertOne(newDataset)).insertedId;
 
-        if(!newDatasetId) return {error: "Something went wrong"}
+        if (!newDatasetId) return { error: "Something went wrong" }
 
-        return {success: "New dataset added successfully"}
-    } catch(err) {
+        return { success: "New dataset added successfully" }
+    } catch (err) {
         console.error(err);
-        return {error: "Something went wrong."}
+        return { error: "Something went wrong." }
     }
 }
 
-export async function getDatasets() {
+export async function getDataInfoById(id: string) {
     try {
-        const db = await connectDB();
-        const datasetCollection = db.collection('datasets');
-        const data = await datasetCollection.find({});
-        return {
-            success: true,
-            data: data
-        }
-    } catch(err) {
+        const { db } = await connectDB();
+        const collection = await db.collection('datasets');
+        const data = await collection.find({ _id: new ObjectId(id) }).toArray();
+        return data[0]; 
+    } catch (err) {
+        return [];
+    }
+}
+
+export async function fetchAllDatasets() {
+    try {
+        const {db} = await connectDB();
+        const collection = await db.collection('datasets');
+        const data = collection.find({}).toArray();
+        if(!data) return [];
+        return data;
+    } catch (err) {
         console.error(err);
-        return {success: false, data: []}
+        return [];
     }
 }

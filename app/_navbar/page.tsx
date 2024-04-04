@@ -18,7 +18,6 @@ function Navbar() {
                         </>
                     )}
                     {isLoggedIn && <Logout />}
-                    <Input type="text" name="" id="" placeholder="Search Datasets" className="md:w-[350px]" />
                 </div>
             </div>
         </nav>
