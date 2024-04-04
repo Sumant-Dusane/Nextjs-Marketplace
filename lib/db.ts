@@ -11,7 +11,7 @@ export async function connectDB() {
         }
     } 
 
-    const client = new MongoClient(process.env.MONGO_URI);
+    const client = new MongoClient('mongodb+srv://sumant-dusane:sumant123456@sumant-dusane.3donyvz.mongodb.net/?retryWrites=true&w=majority');
     await client.connect();
     const db = client.db('iot-marketplace');
 
